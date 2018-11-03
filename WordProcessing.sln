@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WordProcessing", "WordProcessing\WordProcessing.shproj", "{70769572-31E0-4F95-92FA-71BB9308DF5B}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		WordProcessing\WordProcessing.projitems*{70769572-31e0-4f95-92fa-71bb9308df5b}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9ACAA471-1934-4041-B276-065962B528C5}
+	EndGlobalSection
+EndGlobal
