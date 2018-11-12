@@ -5,9 +5,39 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WordProcessing", "WordProcessing\WordProcessing.shproj", "{70769572-31E0-4F95-92FA-71BB9308DF5B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLLWordProc", "BLLWordProc\BLLWordProc.csproj", "{874810B3-803F-460E-9BFF-313E15974953}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DALWordProc", "DALWordProc\DALWordProc.csproj", "{DF4798D6-92B6-4B83-A3BA-C4C6284A9AED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestWordProc", "UnitTestWordProc\UnitTestWordProc.csproj", "{6AB6D0BF-3033-4397-9497-9F1ED545737A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleWordProc", "ConsoleWordProc\ConsoleWordProc.csproj", "{BE4A0B85-D420-46D5-8223-740E4687C46B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WordProcessing\WordProcessing.projitems*{70769572-31e0-4f95-92fa-71bb9308df5b}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{874810B3-803F-460E-9BFF-313E15974953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874810B3-803F-460E-9BFF-313E15974953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874810B3-803F-460E-9BFF-313E15974953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874810B3-803F-460E-9BFF-313E15974953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF4798D6-92B6-4B83-A3BA-C4C6284A9AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF4798D6-92B6-4B83-A3BA-C4C6284A9AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF4798D6-92B6-4B83-A3BA-C4C6284A9AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF4798D6-92B6-4B83-A3BA-C4C6284A9AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB6D0BF-3033-4397-9497-9F1ED545737A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AB6D0BF-3033-4397-9497-9F1ED545737A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AB6D0BF-3033-4397-9497-9F1ED545737A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AB6D0BF-3033-4397-9497-9F1ED545737A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE4A0B85-D420-46D5-8223-740E4687C46B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE4A0B85-D420-46D5-8223-740E4687C46B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE4A0B85-D420-46D5-8223-740E4687C46B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE4A0B85-D420-46D5-8223-740E4687C46B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
