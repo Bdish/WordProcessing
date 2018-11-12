@@ -10,26 +10,7 @@ namespace UnitTestWordProc
     [TestFixture]
     public class ConsoleWordProc
     {
-
-        /* IEnumerable<Func<KeyValuePair<Encoding, EncodingType>>> TestCases
-         {
-              get
-              {
-                  yield return () => KeyValuePair.Create( Encoding.UTF8, EncodingType.UTF8);
-                  yield return () => KeyValuePair.Create(Encoding.UTF32, EncodingType.NotDefined);
-                  yield return () => KeyValuePair.Create(Encoding.Unicode, EncodingType.NotDefined);
-
-              }
-          }*/
-
-
-
-
-
-
-       
-
-
+        
         /// <summary>
         /// Тестирование индентификации типа текста в файле.
         /// В данном тестировании должны создаваться файлы c/без BOM с/без текстом (ом)
@@ -50,7 +31,7 @@ namespace UnitTestWordProc
         [TestCase("", "UTF32", false, EncodingType.NotDefined)]
         [TestCase("", "Unicode", false, EncodingType.NotDefined)]
         [TestCase("", "ASCII", false, EncodingType.NotDefined)]
-        public void TestDetectEncodingTextFromFileWithoutBOM(string text,string format, bool BOM, EncodingType resultType)
+        public void TestDetectEncodingTextFromFile(string text,string format, bool BOM, EncodingType resultType)
         {
             Encoding typeFormat;//определяем формат файла
             switch (format)
