@@ -79,14 +79,21 @@ namespace ConsoleWordProc
         /// <param name="pathToFile"></param>
         public void SetBOM(string pathToFile)
         {
+            if (File.Exists(pathToFile))
+            {
 
-            _data = new byte[5];
+                _data = new byte[5];
 
-            FileStream file = new FileStream(pathToFile, FileMode.Open);
+                FileStream file = new FileStream(pathToFile, FileMode.Open);
 
-            file.Read(_data, 0, 5);
+                file.Read(_data, 0, 5);
 
-            file.Close();
+                file.Close();
+            }
+            else
+            {
+                throw new Exception("File "+ pathToFile+ " not exists");
+            }
         }
 
         /// <summary>

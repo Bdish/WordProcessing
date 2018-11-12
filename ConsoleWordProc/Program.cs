@@ -27,17 +27,10 @@ namespace ConsoleWordProc
 
             detect.SetBOM(path);
 
-            EncodingType type = EncodingType.NotDefined;
-
-            try
-            {
-                type = detect.Detect();
-            }
-            catch
-            {
-                Console.WriteLine("Error");
-            }
-
+            EncodingType type = EncodingType.NotDefined;     
+            
+            type = detect.Detect();    
+            
             if (type == EncodingType.UTF8)
             {
                 return true;
