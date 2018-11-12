@@ -50,7 +50,7 @@ namespace ConsoleWordProc
 
              CommandLineApplication commandLineApplication = new CommandLineApplication(throwOnUnexpectedArg: false);
 
-             var createDictionary = commandLineApplication.Option(
+            CommandOption createDictionary = commandLineApplication.Option(
              "--create | -c",
              "The command to create a dictionary, you must specify the name of the file with the text. A dictionary will be created from the text.",
              CommandOptionType.SingleValue);
@@ -71,45 +71,35 @@ namespace ConsoleWordProc
 
              commandLineApplication.OnExecute(() =>
              {
-                 int numberInsertCommand = 0;
-                 if (createDictionary.HasValue())
-                 {
-                     numberInsertCommand++;
-                 }
+                 //одновременно должна выполняться только одна команда
+                 int numberInsertCommand = 0;//счетчик команд
 
-                 if (updateDictionary.HasValue())
+                 foreach(var command in commandLineApplication.GetOptions())
                  {
-                     numberInsertCommand++;
-                 }
+                     if (command.HasValue())
+                     {
+                         numberInsertCommand++;
+                     }
+                 }                
 
-                 if (deleteDictionary.HasValue())
-                 {
-                     numberInsertCommand++;
-                 }
-
-                 if (numberInsertCommand > 1)
+                 if (numberInsertCommand > 1)//команд больше чем одна
                  {
                      Console.WriteLine("You can specify only one command-line parameter at a time (commands)");
                      Environment.Exit(0);
                      return 0;
                  }
 
+                 
                  DBDictionaryWord dbContext;
                  IGenericRepository<DictionaryWord> repo;
                  ManagerDictionary manager;
-                 try
-                 {
-                     dbContext = new DBDictionaryWord();
-                     repo = new GenericRepository<DictionaryWord>(dbContext);
-                     manager = new ManagerDictionary(repo);
-                 }
-                 catch(Exception ex)
-                 {
-                     Console.WriteLine(ex.Message);
-                     Environment.Exit(0);
-                     return 0;
-                 }
+                 
+                 dbContext = new DBDictionaryWord();
+                 repo = new GenericRepository<DictionaryWord>(dbContext);
+                 manager = new ManagerDictionary(repo);
 
+                 //обработка команд
+                 //команда создания словаря
                  if (createDictionary.HasValue())
                  {
                     
@@ -118,18 +108,15 @@ namespace ConsoleWordProc
                          
                         string text = "";
                         text = File.ReadAllText(createDictionary.Value(), Encoding.Default);
-                        manager.CreateDictionary(text);
-                         
+                        manager.CreateDictionary(text);                        
                     }
                     else
                     {
                         Console.WriteLine("Error: The file format is not UTF8.");
-                    }
-                    
-                     
+                    } 
                  }
 
-
+                 //команда обновления словаря
                  if (updateDictionary.HasValue())
                  {
                      
@@ -142,11 +129,10 @@ namespace ConsoleWordProc
                     else
                     {
                         Console.WriteLine("Error: The file format is not UTF8.");
-                    }
-                     
+                    }                     
                  }
 
-
+                 //команда удаления словаря
                  if (deleteDictionary.HasValue())
                  {
                          
@@ -164,8 +150,10 @@ namespace ConsoleWordProc
 
         static void Main(string[] args)
         {
+            
             if (args.Length != 0)
             {
+                //Если есть команды
                 try
                 {
                     var commandLineApplication = InitCommandLine(args);
@@ -226,8 +214,6 @@ namespace ConsoleWordProc
                
             }
         }
-
         
-
     }
 }

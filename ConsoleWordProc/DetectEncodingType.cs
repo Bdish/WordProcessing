@@ -74,19 +74,19 @@ namespace ConsoleWordProc
         }
 
         /// <summary>
-        /// 
+        /// Получение сигнатуры кодировки BOM из файла.
         /// </summary>
-        /// <param name="pathToFile"></param>
-        public void SetBOM(string pathToFile)
+        /// <param name="pathToFile">Полный путь к файлу и имя файла</param>
+        public void SetBOM(string pathToFile, int countBytesForRead=5)
         {
             if (File.Exists(pathToFile))
             {
 
-                _data = new byte[5];
+                _data = new byte[countBytesForRead];//вынести в константы
 
                 FileStream file = new FileStream(pathToFile, FileMode.Open);
 
-                file.Read(_data, 0, 5);
+                file.Read(_data, 0, countBytesForRead);
 
                 file.Close();
             }
