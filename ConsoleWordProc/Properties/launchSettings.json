@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ConsoleWordProc": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "-c text.txt"
     }
   }
 }

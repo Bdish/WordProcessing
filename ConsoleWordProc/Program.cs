@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BLLWordProc;
@@ -100,44 +101,65 @@ namespace ConsoleWordProc
                      return 0;
                  }
 
-                 DBDictionaryWord dbContext = new DBDictionaryWord();
-                 IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
-                 ManagerDictionary manager = new ManagerDictionary(repo);
+                 DBDictionaryWord dbContext;
+                 IGenericRepository<DictionaryWord> repo;
+                 ManagerDictionary manager;
+                 try
+                 {
+                     dbContext = new DBDictionaryWord();
+                     repo = new GenericRepository<DictionaryWord>(dbContext);
+                     manager = new ManagerDictionary(repo);
+                 }
+                 catch(Exception ex)
+                 {
+                     Console.WriteLine(ex.Message);
+                     Environment.Exit(0);
+                     return 0;
+                 }
 
                  if (createDictionary.HasValue())
                  {
-                     if (IsUTF8(createDictionary.Value()))
-                     {
-                         string text ="";
-                         text = File.ReadAllText(createDictionary.Value(), Encoding.Default);                       
-                         manager.CreateDictionary(text);
-                     }
-                     else
-                     {
-                         Console.WriteLine("Error: The file format is not UTF8.");
-                     }
+                    
+                    if (IsUTF8(createDictionary.Value()))
+                    {
+                         
+                        string text = "";
+                        text = File.ReadAllText(createDictionary.Value(), Encoding.Default);
+                        manager.CreateDictionary(text);
+                         
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: The file format is not UTF8.");
+                    }
+                    
+                     
                  }
 
-                 
+
                  if (updateDictionary.HasValue())
                  {
-                     if (IsUTF8(updateDictionary.Value()))
-                     {
-                         string text = "";
-                         text = File.ReadAllText(updateDictionary.Value(), Encoding.Default);
-                         manager.UpdateDictionary(text);
-                     }
-                     else
-                     {
-                         Console.WriteLine("Error: The file format is not UTF8.");
-                     }
+                     
+                    if (IsUTF8(updateDictionary.Value()))
+                    {
+                        string text = "";
+                        text = File.ReadAllText(updateDictionary.Value(), Encoding.Default);
+                        manager.UpdateDictionary(text);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: The file format is not UTF8.");
+                    }
+                     
                  }
 
-                 
+
                  if (deleteDictionary.HasValue())
-                 {                    
-                     manager.DeleteDictionary();
-                 }
+                 {
+                         
+                        manager.DeleteDictionary();
+                         
+                     }
                  Environment.Exit(0);
                  return 0;
              });
@@ -151,8 +173,17 @@ namespace ConsoleWordProc
         {
             if (args.Length != 0)
             {
-                var commandLineApplication = InitCommandLine(args);
-                commandLineApplication.Execute(args);
+                try
+                {
+                    var commandLineApplication = InitCommandLine(args);
+                    commandLineApplication.Execute(args);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(0);
+                    return;
+                }
             }
 
             //без параметров командной строки, при этом оно должно автоматически переходить в режим ввода, стандартный поток ввода – с клавиатуры
@@ -172,10 +203,20 @@ namespace ConsoleWordProc
                 else
                 if (info.Key == ConsoleKey.Enter && prefix.Length > 0)//ввели не пустую строку
                 {
-                    DBDictionaryWord dbContext = new DBDictionaryWord();
-                    IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
-                    BaseManagerDictionary manager = new ManagerDictionary(repo);
-                    var arrayWords = manager.FindWords(prefix.ToString());
+                    List<DictionaryWord> arrayWords ;
+                    try
+                    {
+                        DBDictionaryWord dbContext = new DBDictionaryWord();
+                        IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
+                        BaseManagerDictionary manager = new ManagerDictionary(repo);
+                        arrayWords = manager.FindWords(prefix.ToString());
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Environment.Exit(0);
+                        return;
+                    }
 
                     Console.WriteLine();
 
