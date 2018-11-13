@@ -10,13 +10,16 @@ namespace UnitTestWordProc
     [TestFixture]
     public class ConsoleWordProc
     {
-        
+
+
         /// <summary>
         /// Тестирование индентификации типа текста в файле.
         /// В данном тестировании должны создаваться файлы c/без BOM с/без текстом (ом)
         /// </summary>
-        /// <param name="format"></param>
-        /// <param name="resultType"></param>
+        /// <param name="text">Текст для сохранния в файл (любой)</param>
+        /// <param name="format">Формат текста</param>
+        /// <param name="BOM">Создание сегмента BOM в файле</param>
+        /// <param name="resultType">Что после декодирования должны получить</param>
         [TestCase("", "UTF8", true, EncodingType.UTF8)]
         [TestCase("", "Unicode", true, EncodingType.NotDefined)]
         [TestCase("asdfsdf", "UTF8",true, EncodingType.UTF8)]
@@ -73,7 +76,7 @@ namespace UnitTestWordProc
 
             using (var file = new StreamWriter("Foo.txt", false, typeFormat))
             {
-                file.WriteLine("fgdfg");
+                file.WriteLine(text);
             }
 
             //проверка идентификации кодировки текста в файле
