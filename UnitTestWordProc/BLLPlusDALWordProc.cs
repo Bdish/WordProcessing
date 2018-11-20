@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Unity;
+using Unity.Lifetime;
 
 namespace UnitTestWordProc
 {
@@ -27,7 +29,7 @@ namespace UnitTestWordProc
             IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
             BaseManagerDictionary manager = new ManagerDictionary(repo);
 
-            if (repo.Get().Count() > 0)
+            if (repo.Get().Any() )
             {
                 manager.DeleteDictionary();
             }
@@ -52,11 +54,18 @@ namespace UnitTestWordProc
         [TestCase("жил жил  ", "жил жил ", "")] //0 + 0
         public void UpdateDictionary(string text1, string text2, string trueResult)
         {
+          /*  IUnityContainer container = new UnityContainer();
+            
+            container.RegisterType<DBDictionaryWord>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IGenericRepository<DictionaryWord>, GenericRepository<DictionaryWord>>();
+            container.RegisterType<BaseManagerDictionary, ManagerDictionary>(new ContainerControlledLifetimeManager());
+            var repo = container.Resolve<GenericRepository<DictionaryWord>>();
+            var manager = container.Resolve<ManagerDictionary>();*/
             DBDictionaryWord dbContext = new DBDictionaryWord();
             IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
             BaseManagerDictionary manager = new ManagerDictionary(repo);
 
-            if (repo.Get().Count() > 0)
+            if (repo.Get().Any())
             {
                 manager.DeleteDictionary();
             }
@@ -74,14 +83,14 @@ namespace UnitTestWordProc
             NUnit.Framework.Assert.AreEqual(result.ToString(), trueResult);
         }
 
-        [TestCase("жил жил жил ", "")] // 1 & 1
+        [TestCase("жил жил жил ", "")] 
         public void DeleteDictionary(string text, string trueResult)
         {
             DBDictionaryWord dbContext = new DBDictionaryWord();
             IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
             BaseManagerDictionary manager = new ManagerDictionary(repo);
 
-            if (repo.Get().Count() > 0)
+            if (repo.Get().Any())
             {
                 manager.DeleteDictionary();
             }
@@ -115,14 +124,14 @@ namespace UnitTestWordProc
             IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
             BaseManagerDictionary manager = new ManagerDictionary(repo);
 
-            if (repo.Get().Count() > 0)
+            if (repo.Get().Any())
             {
                 manager.DeleteDictionary();
             }
 
             manager.CreateDictionary(text);
 
-            List<DictionaryWord> words = manager.FindWords(prefix);
+            List<DictionaryWord> words = manager.FindWords(prefix).ToList();
 
 
             StringBuilder result = new StringBuilder();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using BLLWordProc;
 using DALWordProc.EFDbContext;
@@ -8,6 +9,8 @@ using DALWordProc.Entities;
 using DALWordProc.Repository.Implementations;
 using DALWordProc.Repository.Interfaces;
 using Microsoft.Extensions.CommandLineUtils;
+using Unity;
+using Unity.Lifetime;
 
 namespace ConsoleWordProc
 {
@@ -22,21 +25,8 @@ namespace ConsoleWordProc
         public static bool IsUTF8(string path)
         {
             DetectEncodingType detect = new DetectEncodingType();
-            detect.AddDetectEncodingType(EncodingType.UTF8,
-                (data) => { if (data.Length >= 3 && data[0] == 0xEF && data[1] == 0xBB && data[2] == 0xBF) return true; return false; });
-
-            detect.SetBOM(path);
-
-            EncodingType type = EncodingType.NotDefined;     
-            
-            type = detect.Detect();    
-            
-            if (type == EncodingType.UTF8)
-            {
-                return true;
-            }
-
-            return false;
+            DetectEncodingTypeUTF8 detectUTF8 = new DetectEncodingTypeUTF8(detect);           
+            return detectUTF8.Check(path);           
         }
 
         /// <summary>
@@ -102,7 +92,7 @@ namespace ConsoleWordProc
                  //команда создания словаря
                  if (createDictionary.HasValue())
                  {
-                    
+                     
                     if (IsUTF8(createDictionary.Value()))
                     {
                          
@@ -150,7 +140,17 @@ namespace ConsoleWordProc
 
         static void Main(string[] args)
         {
+           /* IUnityContainer container = new UnityContainer();
+            container.RegisterType<DetectEncodingType>(new ContainerControlledLifetimeManager());
+            container.RegisterType<DetectEncodingTypeUTF8>(new ContainerControlledLifetimeManager());
+            container.RegisterType<DBDictionaryWord> (new ContainerControlledLifetimeManager());
+            container.RegisterType<IGenericRepository<DictionaryWord>, GenericRepository<DictionaryWord>>();
+            container.RegisterType<BaseManagerDictionary, ManagerDictionary>(new ContainerControlledLifetimeManager());*/
+
             
+
+
+
             if (args.Length != 0)
             {
                 //Если есть команды
@@ -187,10 +187,12 @@ namespace ConsoleWordProc
                     List<DictionaryWord> arrayWords ;
                     try
                     {
-                        DBDictionaryWord dbContext = new DBDictionaryWord();
-                        IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
-                        BaseManagerDictionary manager = new ManagerDictionary(repo);
-                        arrayWords = manager.FindWords(prefix.ToString());
+                          DBDictionaryWord dbContext = new DBDictionaryWord();
+                          IGenericRepository<DictionaryWord> repo = new GenericRepository<DictionaryWord>(dbContext);
+                          BaseManagerDictionary manager = new ManagerDictionary(repo);
+
+                      //  var manager=container.Resolve<ManagerDictionary>();
+                        arrayWords = manager.FindWords(prefix.ToString()).ToList();
                     }
                     catch(Exception ex)
                     {

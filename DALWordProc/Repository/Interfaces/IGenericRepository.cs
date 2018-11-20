@@ -11,6 +11,7 @@ namespace DALWordProc.Repository.Interfaces
         IEnumerable<TEntity> Get();
         IEnumerable<TEntity> Get(Func<TEntity, bool> predicate);
         void Remove(TEntity item);
+        void RemoveAll();
         void Update(TEntity item);
 
         void ExecuteSQLExpression(string SQLExpression);

@@ -2,7 +2,7 @@
   "profiles": {
     "ConsoleWordProc": {
       "commandName": "Project",
-      "commandLineArgs": "-c text.txt"
+      "commandLineArgs": "-u text.txt"
     }
   }
 }

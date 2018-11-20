@@ -21,16 +21,13 @@ namespace BLLWordProc
         /// </summary>
         private IGenericRepository<DictionaryWord> _repoDictionary;
 
-
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="repoDictionary"> Репозиторий базы данных</param>
         public ManagerDictionary(IGenericRepository<DictionaryWord> repoDictionary)
         {
-            _repoDictionary = repoDictionary;
-            
+            _repoDictionary = repoDictionary;           
         }
 
         /// <summary>
@@ -39,9 +36,11 @@ namespace BLLWordProc
         /// <param name="text">Текст со словами.</param>
         public override void CreateDictionary(string text)
         {
-             
+            
+             // Словарь слов и их частот.
+            Dictionary<string, int> dictionery=new Dictionary<string, int>();
 
-            if (_repoDictionary.Get().Count()>0)//Проверка на пустоту словаря 
+            if (_repoDictionary.Get().Any())//Проверка на пустоту словаря 
             {
                 throw new Exception("Error: Dictionary words in Data Base is not Empty.");
             }
@@ -52,22 +51,20 @@ namespace BLLWordProc
             string[] arrayWords=CheckTextAndSplitOnWords(text);
 
             //очищаем временный словарь
-            _dictionery.Clear();
+            dictionery.Clear();
 
             //составляем словарь с частотами
-            CreatDictionaryWordsAndFrequencies(arrayWords);
+            CreatDictionaryWordsAndFrequencies(arrayWords, dictionery);
             
             //добавление в бд
-            foreach (KeyValuePair<string, int> word in _dictionery)
+            foreach (KeyValuePair<string, int> word in dictionery)
             {
                 if (LimitForAddToDictionary(word.Key, word.Value))
                 {
                     DictionaryWord newWord = new DictionaryWord {/*Id = _repoDictionary.Get().Count()+1,*/ Word = word.Key,Frequency = word.Value };
                     _repoDictionary.Create(newWord);
                 }
-            }
-            
-           
+            }           
         }
 
         /// <summary>
@@ -76,52 +73,46 @@ namespace BLLWordProc
         /// <param name="text">Текст со словами.</param>
         public override void UpdateDictionary(string text)
         {
-           
+
+            // Словарь слов и их частот.
+            Dictionary<string, int> dictionery = new Dictionary<string, int>();
+
             //проверка текста на пустоту            
             //из текста удалить все знаки препинания
             //получить массив слов из текста
             string[] arrayWords = CheckTextAndSplitOnWords(text);
 
             //очищаем временный (промежуточный) словарь
-            _dictionery.Clear();
+            dictionery.Clear();
 
             //составляем словарь с частотами
-            CreatDictionaryWordsAndFrequencies(arrayWords);
+            CreatDictionaryWordsAndFrequencies(arrayWords,dictionery);
 
+            //Слово в базе данных
+            IEnumerable<DictionaryWord> wordInDB;
 
-            //Слова в базе данных
-            List<DictionaryWord> wordInDB;
-
-            foreach (KeyValuePair<string, int> word in _dictionery)
+            foreach (KeyValuePair<string, int> word in dictionery)
             {
                 //проверка на несколько значений в бд и выдать исключение
-                wordInDB = _repoDictionary.Get(x => x.Word == word.Key).ToList();
-
-                if (wordInDB.Count > 1)
-                {
-                    throw new Exception("Error: A few words in the database. UpdateDictionary");
-                }
-
-                
+                wordInDB = _repoDictionary.Get(x => x.Word == word.Key);
+               
                 if (LimitForAddToDictionary(word.Key, word.Value))
                 {
-
-                    if (wordInDB.Count == 1)
+                    if (wordInDB.Any())                       
                     {
                         //Обновляем в базе существующее слово
-                        wordInDB[0].Frequency += word.Value;
-                        _repoDictionary.Update(wordInDB[0]);
+
+                        DictionaryWord specificWord = wordInDB.FirstOrDefault();
+                        specificWord.Frequency += word.Value;
+                        _repoDictionary.Update(specificWord);
                     }
                     else
                     {
                         //Создаем в базе новое слово
-                        DictionaryWord newWord = new DictionaryWord { /*Id = _repoDictionary.Get().Count() + 1,*/ Word = word.Key, Frequency = word.Value };
+                        DictionaryWord newWord = new DictionaryWord { Word = word.Key, Frequency = word.Value };
                         _repoDictionary.Create(newWord);
                     }
-
                 }
-
-
             }
         }
 
@@ -132,8 +123,7 @@ namespace BLLWordProc
         {
             //очищаем таблицу + счетчики
             // _repoDictionary.ExecuteSQLExpression("TRUNCATE TABLE[DictionaryWords]");
-            foreach(var item in _repoDictionary.Get())
-                                    _repoDictionary.Remove(item);
+            _repoDictionary.RemoveAll();
         }
 
         /// <summary>
@@ -141,12 +131,12 @@ namespace BLLWordProc
         /// </summary>
         /// <param name="prefix">Слово или часть слова для поиска в словаре.</param>
         /// <returns>Список подходящих под префикс слов.</returns>
-        public override List<DictionaryWord> FindWords(string prefix)
+        public override IEnumerable<DictionaryWord> FindWords(string prefix)
         {
-            
-            List<DictionaryWord> resultListWords = _repoDictionary.Get(x => x.Word.Contains(prefix)).OrderByDescending(x => x.Frequency).Take(GlobalSetting.MaxNumberOfWordsReturned).ToList();
+
+            IEnumerable<DictionaryWord> resultListWords = _repoDictionary.Get(x => x.Word.StartsWith(prefix)).OrderByDescending(x => x.Frequency).Take(GlobalSetting.MaxNumberOfWordsReturned);
             var grouped = resultListWords.GroupBy(x => x.Frequency).Select(group => new { Key = group.Key, Items = group.OrderBy(t => t.Word) });
-            return grouped.Select(x => x.Items).SelectMany(x => x.ToList()).ToList();
+            return grouped.Select(x => x.Items).SelectMany(/*x => x.ToList()*/x=>x);
         }
 
         /// <summary>
@@ -157,7 +147,7 @@ namespace BLLWordProc
         private string[] CheckTextAndSplitOnWords(string text)
         {
            
-            if (text == null || text == "")//Проверка на пустоту текста
+            if (String.IsNullOrEmpty(text))//Проверка на пустоту текста
             {
                 throw new Exception("Error: Text is empty or null in create or update dictionary words.");
             }
@@ -172,10 +162,26 @@ namespace BLLWordProc
         /// Создание временного словаря со словами и их частотой появления в тексте.
         /// </summary>
         /// <param name="arrayWords">Список слов в тексте.</param>
-        private void CreatDictionaryWordsAndFrequencies(string[] arrayWords)
+        private void CreatDictionaryWordsAndFrequencies(string[] arrayWords,Dictionary<string, int> dictionery)
         {
             foreach (var word in arrayWords)
             {
+
+               int frequency;
+                //
+                //
+                //if (_dictionery.ContainsKey(word)) 91 стр Джон Скит - C# для профессионалов. Тонкости программирования - 2014
+                if (dictionery.TryGetValue(word, out frequency))
+                {
+                    dictionery[word]++;//повышаем частоту
+                }
+                else
+                {
+                    dictionery.Add(word, 1);//новое слово с единичной частотой
+                }
+
+                /*    
+
                 try
                 {
                     if (_dictionery[word] >= 1) //уже не новое слово
@@ -187,7 +193,7 @@ namespace BLLWordProc
                 {
                     _dictionery.Add(word, 1);//новое слово с единичной частотой
                 }
-
+                */
 
             }
         }
@@ -200,15 +206,12 @@ namespace BLLWordProc
         /// <returns></returns>
         private bool LimitForAddToDictionary(string word,int frequency)
         {
-            
-            if (frequency >= GlobalSetting.MinFrequencyWord //количество повторений слова в тексте, минимальный порог для попадания в словарь
+
+            return frequency >= GlobalSetting.MinFrequencyWord //количество повторений слова в тексте, минимальный порог для попадания в словарь
                 && word.Length >= GlobalSetting.MinLengthWord //количество символов в слове, минимальный порог для попадания в словарь
                 && word.Length <= GlobalSetting.MaxLengthWord//количество символов в слове, максимальный порог для попадания в словарь
-                )
-            {
-                return true;
-            }
-                return false;
+                ;
+            
         }
     }
 }

@@ -100,7 +100,7 @@ namespace UnitTestWordProc
 
             manager.CreateDictionary(text);
 
-            List<DictionaryWord> words=manager.FindWords(prefix);
+            List<DictionaryWord> words=manager.FindWords(prefix).ToList();
 
 
             StringBuilder result = new StringBuilder();

@@ -8,16 +8,9 @@ namespace BLLWordProc
     /// </summary>
     public abstract class BaseManagerDictionary
     {
-        /// <summary>
-        /// Словарь слов и их частот.
-        /// </summary>
-        protected Dictionary<string, int> _dictionery;
+        
 
-        public BaseManagerDictionary()
-        {
-            _dictionery = new Dictionary<string, int>();
-        }
-
+        
         /// <summary>
         /// Создание словаря. Словарь должен быть пустым.
         /// </summary>
@@ -44,6 +37,6 @@ namespace BLLWordProc
         /// </summary>
         /// <param name="prefix"> Префикс для поиска слов.</param>
         /// <returns> Список подходящих под префикс слов.</returns>
-        public abstract List<DictionaryWord> FindWords(string prefix);
+        public abstract IEnumerable<DictionaryWord> FindWords(string prefix);
     }
 }

@@ -56,12 +56,17 @@ namespace UnitTestWordProc
 
         public IEnumerable<DictionaryWord> Get(Func<DictionaryWord, bool> predicate)
         {
-            return _dictionary.Where(predicate).ToList();
+            return _dictionary.Where(predicate);
         }
 
         public void Remove(DictionaryWord item)
         {
             _dictionary.Remove(item);
+        }
+
+        public void RemoveAll()
+        {
+            _dictionary.Clear();
         }
 
         public void Update(DictionaryWord item)

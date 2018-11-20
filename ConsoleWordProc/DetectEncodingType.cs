@@ -147,5 +147,39 @@ namespace ConsoleWordProc
 
     }
 
-    
+    /// <summary>
+    /// Класс для определения кодировки UTF8 текста в файле.
+    /// </summary>
+    public class DetectEncodingTypeUTF8
+    {
+        private DetectEncodingType _detect;
+
+        public DetectEncodingTypeUTF8(DetectEncodingType detect)
+        {
+            _detect = detect;
+            _detect.AddDetectEncodingType(EncodingType.UTF8,
+                (data) => { if (data.Length >= 3 && data[0] == 0xEF && data[1] == 0xBB && data[2] == 0xBF) return true; return false; });
+        }
+
+        /// <summary>
+        /// Проверка кодировки текста в файле по сигнатуре кодировки (BOM => Byte Order Mark) в начале файла.
+        /// </summary>
+        /// <param name="pathToFile">Путь к файлу.</param>
+        /// <returns> true - UTF8, false - другая кодировка. </returns>
+        public bool Check(string pathToFile)
+        {
+            _detect.SetBOM(pathToFile);
+
+            EncodingType type = EncodingType.NotDefined;
+
+            type = _detect.Detect();
+
+            if (type == EncodingType.UTF8)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 }

@@ -60,5 +60,11 @@ namespace DALWordProc.Repository.Implementations
         {
             _context.Database.ExecuteSqlCommand(SQLExpression);
         }
+
+        public void RemoveAll()
+        {
+            _dbSet.RemoveRange(_dbSet);
+            _context.SaveChanges();
+        }
     }
 }
